@@ -11,5 +11,12 @@
 
     <artifactId>blog-domain</artifactId>
     <packaging>jar</packaging>
+    <dependencies>
+        <dependency>
+            <groupId>io.lettuce</groupId>
+            <artifactId>lettuce-core</artifactId>
+            <version>5.1.8.RELEASE</version>
+        </dependency>
+    </dependencies>
 
 </project>
