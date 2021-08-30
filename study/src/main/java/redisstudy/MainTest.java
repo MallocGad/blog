@@ -2,6 +2,7 @@ package redisstudy;
 
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.RedisURI;
+import io.lettuce.core.SetArgs;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.sync.RedisCommands;
 import org.junit.AfterClass;
@@ -23,8 +24,12 @@ public class MainTest {
     public void test1() {
         // 获取同步的command
         RedisCommands<String, String> redisCommands = connection.sync();
-        String ping = redisCommands.ping();
-        System.out.println("ping:" + ping);
+
+        SetArgs args = SetArgs.Builder.nx().ex(500);
+        String result = redisCommands.set("name", "throwable", args);
+        System.out.println("set结果：:" + result);
+        String name = redisCommands.get("name");
+        System.out.println(name);
     }
 
     @BeforeClass
@@ -33,7 +38,9 @@ public class MainTest {
         RedisURI uri = RedisURI.create("redis://localhost/");
         //RedisURI uri = RedisURI.builder().withHost("localhost").withPort(6379).build();
         //RedisURI uri = new RedisURI("localhost", 6379, Duration.ofSeconds(60));
+        // 创建客户端
         client = RedisClient.create(uri);
+        // 创建线程安全的链接
         connection = client.connect();
         System.out.println("redis连接成功：=============");
     }
