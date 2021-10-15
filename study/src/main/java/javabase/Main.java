@@ -10,9 +10,10 @@ import java.util.function.Function;
  * @since: 2021/7/17 13:53
  */
 public class Main {
-    Function<String,Integer> function;
+    Function<Integer,Integer> function;
     @Test
     public void test(){
-        System.out.println(function.apply("a"));
+        function = t->t+1;
+        System.out.println(function.apply(1));
     }
 }
