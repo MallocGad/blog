@@ -247,44 +247,35 @@ public class LeetCode2 {
 
     /**
      * 19. 删除链表的倒数第 N 个结点
+     * <p>使用三指针解法：
+     * 最前面为探路指针，中间为临时指针，最后为删除指针。
+     * <p>删除指针的几种情况：
+     * 1.
      */
     public ListNode removeNthFromEnd(ListNode head, int n) {
         if (Objects.isNull(head)) {
             return null;
         }
-        // 删除指针
         ListNode deletePointer = head;
-        // 中间指针
         ListNode tempPointer = head;
-        // 探路指针
         ListNode tailPointer = head;
-        // 行走步数
         int t = 0;
         while (Objects.nonNull(tailPointer.next)) {
             tailPointer = tailPointer.next;
             t++;
             if (t == n) {
-                // 删除指针在前防止跨过目标
                 deletePointer = tempPointer;
                 tempPointer = tailPointer;
                 t = 0;
             }
         }
-        // 在探路指针到达尾节点时，删除指针目前停留在倒数t+n个节点，所以删除指针需要在移动t-1步到达删除指针前一个节点
+        if (deletePointer == tempPointer){
+            return head.next;
+        }
         for (int i = 0; i < t; i++) {
             deletePointer = deletePointer.next;
         }
-        if (0 == t){
-
-        }
-        // 删除节点
-        if (Objects.isNull(deletePointer.next)) {
-            // 只有一个节点时
-            return null;
-        } else {
-            deletePointer.next = deletePointer.next.next;
-        }
-
+        deletePointer.next = deletePointer.next.next;
         return head;
     }
 
