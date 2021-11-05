@@ -3,6 +3,7 @@ package top.ht;
 import org.springframework.util.StopWatch;
 
 import javax.jnlp.ClipboardService;
+import javax.transaction.TransactionRequiredException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
@@ -247,35 +248,19 @@ public class LeetCode2 {
 
     /**
      * 19. 删除链表的倒数第 N 个结点
-     * <p>使用三指针解法：
-     * 最前面为探路指针，中间为临时指针，最后为删除指针。
-     * <p>删除指针的几种情况：
-     * 1.
      */
+    int cur = 0;
+
     public ListNode removeNthFromEnd(ListNode head, int n) {
         if (Objects.isNull(head)) {
             return null;
         }
-        ListNode deletePointer = head;
-        ListNode tempPointer = head;
-        ListNode tailPointer = head;
-        int t = 0;
-        while (Objects.nonNull(tailPointer.next)) {
-            tailPointer = tailPointer.next;
-            t++;
-            if (t == n) {
-                deletePointer = tempPointer;
-                tempPointer = tailPointer;
-                t = 0;
-            }
+        head.next = removeNthFromEnd(head.next, n);
+        // cur是在到达尾部后开始增加的
+        cur++;
+        if (cur == n) {
+            head = head.next;
         }
-        if (deletePointer == tempPointer){
-            return head.next;
-        }
-        for (int i = 0; i < t; i++) {
-            deletePointer = deletePointer.next;
-        }
-        deletePointer.next = deletePointer.next.next;
         return head;
     }
 
@@ -296,6 +281,47 @@ public class LeetCode2 {
         return result;
     }
 
+    public class TreeNode {
+        int val;
+        TreeNode left;
+        TreeNode right;
+
+        TreeNode() {
+        }
+
+        TreeNode(int val) {
+            this.val = val;
+        }
+
+        TreeNode(int val, TreeNode left, TreeNode right) {
+            this.val = val;
+            this.left = left;
+            this.right = right;
+        }
+    }
+
+    /**
+     * 94.二叉树中序遍历
+     *
+     * @param root
+     * @return
+     */
+    public List<Integer> inorderTraversal(TreeNode root) {
+        List<Integer> result = new ArrayList<>();
+        Stack<TreeNode> stack = new Stack<>();
+        while (Objects.nonNull(root) || !stack.empty()) {
+            while (Objects.nonNull(root)) {
+                stack.push(root);
+                root = root.left;
+            }
+            root = stack.pop();
+            result.add(root.val);
+            root = root.right;
+        }
+        return result;
+    }
+
+
     private void dps(List<List<Integer>> result, Stack<Integer> tempResult, int[] candidates, int point, int target) {
         if (target == 0) {
             result.add(new ArrayList<>(tempResult));
@@ -315,9 +341,9 @@ public class LeetCode2 {
     public static void main(String[] args) throws UnsupportedEncodingException {
         //        List<List<Integer>> sum = new LeetCode2().fourSum(new int[]{1, 0, -1, 0, -2, 2}, 0);
         //        System.out.println(sum);
-//        List<List<Integer>> result = new LeetCode2().combinationSum(new int[]{5, 2, 3}, 8);
-//        System.out.println(result);
-//        BigDecimal multiply = new BigDecimal(10).multiply(new BigDecimal(2));
+        //        List<List<Integer>> result = new LeetCode2().combinationSum(new int[]{5, 2, 3}, 8);
+        //        System.out.println(result);
+        //        BigDecimal multiply = new BigDecimal(10).multiply(new BigDecimal(2));
         StopWatch watch = new StopWatch();
         watch.start();
 //        List<List<Integer>> res = new LeetCode2().fourSum(new int[]{-479, -472, -469, -461, -456, -420, -412, -403, -391, -377, -362, -361, -340, -336, -336, -323, -315, -301, -288, -272, -271, -246, -244, -227, -226, -225, -210, -194, -190, -187, -183, -176, -167, -143, -140, -123, -120, -74, -60, -40, -39, -37, -34, -33, -29, -26, -23, -18, -17, -11, -9, 6, 8, 20, 29, 35, 45, 48, 58, 65, 122, 124, 127, 129, 145, 164, 182, 198, 199, 206, 207, 217, 218, 226, 267, 274, 278, 278, 309, 322, 323, 327, 350, 361, 372, 376, 387, 391, 434, 449, 457, 465, 488}, 1979);
