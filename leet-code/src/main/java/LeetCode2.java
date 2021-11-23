@@ -3,6 +3,8 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Stack;
+import java.util.stream.Collectors;
 
 /**
  * LeetCode
@@ -102,44 +104,86 @@ public class LeetCode2 {
      */
     public List<List<Integer>> fourSum(int[] nums, int target) {
 
-        int[] temp = new int[4];
+        Stack<Integer> temp = new Stack<>();
         List<List<Integer>> result = new ArrayList<>();
         if (nums.length < 4) {
             return result;
         }
+        // 排序主要是方便过滤重复组合，同时顺序判断
         Arrays.sort(nums);
-        nSumRecursion(nums, target, 0, 4, temp, result, 0);
+        nSumRecursion(nums, target, 4, temp, result, 0, 0);
         return result;
     }
 
     /**
      * n数之和
+     *
+     * @param nums       待选数组
+     * @param target     目标值
+     * @param n          需要选择几个数
+     * @param temp       保存选取临时数组，出事为空栈
+     * @param result     结果集
+     * @param pointer    所选数的游标。如：选取四个数，如第一个数坐标从零开始，第二个数则总1开始，point则记录所选的第n个数的坐标值
+     * @param tempTarget 临时变量
      */
-    private void nSumRecursion(int[] nums, int target, int deep, int n, int[] temp, List<List<Integer>> result, int pointer) {
-        // 选了n-1个数之后通过大小比较减少判断次数
-        if (n - 1 == deep) {
-            int sum = 0;
-            for (int m = 0; m < n - 1; m++) {
-                sum += nums[temp[m]];
-            }
-            for (int i = pointer; i < nums.length; i++) {
-                if (sum + nums[i] > target) {
-                    return;
-                } else if (sum + nums[i] == target) {
-                    temp[deep] = i;
-                    ArrayList<Integer> integers = new ArrayList<>();
-                    for (int idx : temp) {
-                        integers.add(nums[idx]);
-                    }
-                    result.add(integers);
-                }
+    private void nSumRecursion(int[] nums, int target, int n, Stack<Integer> temp, List<List<Integer>> result, int pointer, int tempTarget) {
+        // 选了n个数之后通过大小比较减少判断次数
+        if (n == temp.size()) {
+            if (tempTarget == target) {
+                result.add(new ArrayList<>(temp));
+                return;
             }
             return;
         }
-        for (int i = pointer; i < nums.length - n + deep; i++) {
-            temp[deep] = i;
-            nSumRecursion(nums, target, deep + 1, n, temp, result, i + 1);
+        // 如果目前还小，则判断最大的值是否大于零
+        if (target > tempTarget && nums[nums.length-1] < 0) {
+            return;
+        }else if(temp.size() > 0 && target < tempTarget && temp.lastElement() > 0){
+            return;
         }
+        for (int i = pointer; i < nums.length; i++) {
+            // 过滤重复的值
+            if (i > pointer && nums[i - 1] == nums[i]) {
+                continue;
+            }
+            temp.push(nums[i]);
+            nSumRecursion(nums, target, n, temp, result, i + 1, tempTarget + nums[i]);
+            temp.pop();
+        }
+    }
+
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        List<List<Integer>> result = new ArrayList<>();
+        // 中间结果值保存变量 可以改为栈试试效率
+        int[] tempResult = new int[151];
+        for (int i = 0; i < candidates.length; i++) {
+            int tempTarget = 0;
+            for (int j = i, n = 0; j < candidates.length && n < 150 && n >= 0; ) {
+                int temp = tempTarget + candidates[j];
+                // 入栈
+                tempResult[n] = candidates[j];
+                // 小于继续使用当前值 入栈
+                if (temp < target) {
+                    tempTarget = temp;
+                    n++;
+                } else {
+                    if (target == temp) {
+                        // 保存结果，继续移除上一次的数字，并将下一个值放入 出栈
+                        if (n != 0 || i == 0) { // 这里当单个满足值时会出现重复的所以做了过滤
+                            result.add(Arrays.stream(tempResult).limit(n + 1).boxed().collect(Collectors.toList()));
+                        }
+                    }
+                    if (n == 0) {
+                        j++;
+                        continue;
+                    }
+                    // tempTarget减去上次值，移除上一次的数字，并将下一个值放入 出栈
+                    tempTarget -= tempResult[--n];
+                    j++;
+                }
+            }
+        }
+        return result;
     }
 
     public static void main(String[] args) throws UnsupportedEncodingException {
@@ -149,7 +193,9 @@ public class LeetCode2 {
         String utf8String = "\\xe7\\xbb\\x93\\xe7\\xae\\x97\\xe4\\xbb\\xb7";
         System.out.println(decodeUTF8Str(utf8String));
 
-
+        int[] a = new int[]{2, 3, 5};
+        List<List<Integer>> lists = new LeetCode2().combinationSum(a, 8);
+        System.out.println(lists);
     }
 
     public static String decodeUTF8Str(String xStr) throws UnsupportedEncodingException {

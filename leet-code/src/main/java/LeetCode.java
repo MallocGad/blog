@@ -1,4 +1,4 @@
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -253,5 +253,28 @@ public class LeetCode {
         int[] nums = new int[]{-1, 0, 1, 1, 55};
         int closest = threeSumClosest(nums, 3);
         System.out.println(closest);
+    }
+
+    static class Node{
+        int v;
+        Node next;
+        Node(int v,Node next){
+            this.v= v;
+            this.next=next;
+        }
+    }
+    public static void main(String[] args) {
+        Node head = new Node(0,null);
+        Node pre = head;
+        for (int i = 1; i < 10; i++) {
+            Node node = new Node(i, null);
+            pre.next = node;
+            pre = node;
+        }
+        Node pointer = head;
+        while(pointer != null){
+            System.out.println(pointer.v);
+            pointer = pointer.next;
+        }
     }
 }
