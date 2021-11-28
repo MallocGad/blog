@@ -1,12 +1,17 @@
+<<<<<<< HEAD:leet-code/src/main/java/LeetCode.java
 import org.testng.annotations.Test;
+=======
+package top.ht;
+
+import org.junit.Test;
+>>>>>>> origin/main:leet-code/src/main/java/top/ht/LeetCode.java
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * TODO Desc
- *
+ * LeetCode代码
  * @author : huangtao3
  * @since : 2020/8/8 14:33
  */
@@ -250,9 +255,9 @@ public class LeetCode {
 
     @Test
     public void test() {
-        int[] nums = new int[]{-1, 0, 1, 1, 55};
-        int closest = threeSumClosest(nums, 3);
-        System.out.println(closest);
+        int[] nums = new int[]{0,0,0,0};
+        List<List<Integer>> lists = threeSum(nums);
+        System.out.println(lists);
     }
 
     static class Node{
