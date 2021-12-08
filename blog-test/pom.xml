@@ -17,6 +17,22 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.alibaba.testable</groupId>
+            <artifactId>testable-all</artifactId>
+            <version>0.7.0</version>
+        </dependency>
     </dependencies>
-
+    <build>
+        <plugins>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-surefire-plugin</artifactId>-->
+<!--                <version>3.0.0-M5</version>-->
+<!--                <configuration>-->
+<!--                    <argLine>@{argLine} -javaagent:${settings.localRepository}/com/alibaba/testable/testable-agent/${testable.version}/testable-agent-${testable.version}.jar</argLine>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+        </plugins>
+    </build>
 </project>

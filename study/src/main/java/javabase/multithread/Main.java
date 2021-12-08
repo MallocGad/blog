@@ -1,10 +1,9 @@
-package multithread;
+package javabase.multithread;
 
 import org.junit.Test;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.LockSupport;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -205,5 +204,23 @@ public class Main {
         }
 
     }
+
+    @Test
+    public void test111(){
+        try {
+            int a = 2;
+            System.out.println("aaa");
+            if (a == 1){
+                return;
+            }else{
+                throw new Exception();
+            }
+        }catch (Exception e){
+            System.out.println(e);
+        }finally {
+            System.out.println("enenedddd");
+        }
+    }
+
 
 }

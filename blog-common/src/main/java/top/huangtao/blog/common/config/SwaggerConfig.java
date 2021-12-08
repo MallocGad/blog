@@ -1,4 +1,4 @@
-package top.huangtao.blog.service.common.config;
+package top.huangtao.blog.common.config;
 
 import org.springframework.context.annotation.Configuration;
 

@@ -1,4 +1,4 @@
-package multithread;
+package javabase.multithread;
 
 import org.junit.Test;
 import org.springframework.util.StopWatch;
