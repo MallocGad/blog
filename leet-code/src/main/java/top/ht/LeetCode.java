@@ -1,6 +1,10 @@
+<<<<<<< HEAD:leet-code/src/main/java/LeetCode.java
+import org.testng.annotations.Test;
+=======
 package top.ht;
 
 import org.junit.Test;
+>>>>>>> origin/main:leet-code/src/main/java/top/ht/LeetCode.java
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -254,5 +258,28 @@ public class LeetCode {
         int[] nums = new int[]{0,0,0,0};
         List<List<Integer>> lists = threeSum(nums);
         System.out.println(lists);
+    }
+
+    static class Node{
+        int v;
+        Node next;
+        Node(int v,Node next){
+            this.v= v;
+            this.next=next;
+        }
+    }
+    public static void main(String[] args) {
+        Node head = new Node(0,null);
+        Node pre = head;
+        for (int i = 1; i < 10; i++) {
+            Node node = new Node(i, null);
+            pre.next = node;
+            pre = node;
+        }
+        Node pointer = head;
+        while(pointer != null){
+            System.out.println(pointer.v);
+            pointer = pointer.next;
+        }
     }
 }
