@@ -1,10 +1,6 @@
-<<<<<<< HEAD:leet-code/src/main/java/LeetCode.java
-import org.testng.annotations.Test;
-=======
 package top.ht;
 
 import org.junit.Test;
->>>>>>> origin/main:leet-code/src/main/java/top/ht/LeetCode.java
 
 import java.util.ArrayList;
 import java.util.Arrays;
