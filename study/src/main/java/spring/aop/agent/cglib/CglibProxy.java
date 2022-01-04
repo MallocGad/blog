@@ -1,4 +1,4 @@
-package agent.cglib;
+package spring.aop.agent.cglib;
 
 import org.springframework.cglib.proxy.Enhancer;
 

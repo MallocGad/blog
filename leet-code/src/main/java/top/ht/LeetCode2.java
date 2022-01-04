@@ -337,6 +337,100 @@ public class LeetCode2 {
         }
     }
 
+    /**
+     * 206 反转链表
+     */
+//    class Solution {
+//        public ListNode reverseList(ListNode head) {
+//            if (null == head || head.next ==null){
+//                return head;
+//            }
+//            ListNode next = reverseList(head.next);
+//            // 到了最后一个节点
+//            head.next.next = head;
+//            head.next = null;
+//            return next;
+//        }
+//    }
+    public ListNode reverseList(ListNode head) {
+
+        ListNode pre = null;
+        while (head != null) {
+            ListNode next = head.next;
+            head.next = pre;
+            pre = head;
+            head = next;
+        }
+        return pre;
+    }
+
+    /**
+     * 704 二分查找
+     */
+    public int search(int[] nums, int target) {
+        int top = nums.length - 1, flower = 0, mid;
+        while (top >= flower) {
+            mid = (top - flower) / 2 + flower;
+
+            if (nums[mid] == target) {
+                return mid;
+            }
+            if (nums[mid] > target) {
+                top = mid - 1;
+            } else {
+                flower = mid + 1;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * 278. 第一个错误的版本
+     */
+    public int firstBadVersion(int n) {
+        int mid, top = n, low = 1;
+        // 记录最后一个出现坏的和不坏的，方便查找临界值
+        while (top > low) {
+            mid = (top - low) / 2 + low;
+            if (isBadVersion(mid)) {
+                top = mid;
+            } else {
+                low = mid + 1;
+            }
+        }
+        return top;
+    }
+
+    /**
+     * 35. 搜索插入位置
+     */
+    public int searchInsert(int[] nums, int target) {
+        int top = nums.length - 1, low = 0, mid;
+        // 最后一个小于target的位置
+        int lastMin = 0;
+        while (top >= low) {
+            mid = low + (top - low) / 2;
+            if (nums[mid] == target) {
+                return mid;
+            }
+            if (target > nums[mid]) {
+                low = mid + 1;
+                lastMin = mid;
+            } else {
+                top = mid - 1;
+            }
+        }
+        // 处理特殊情况：当target要被插入首位时
+        if (nums[lastMin] < target) {
+            return lastMin + 1;
+        }
+        return lastMin;
+    }
+
+    boolean isBadVersion(int version) {
+        return true;
+    }
+
 
     public static void main(String[] args) throws UnsupportedEncodingException {
         //        List<List<Integer>> sum = new LeetCode2().fourSum(new int[]{1, 0, -1, 0, -2, 2}, 0);

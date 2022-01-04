@@ -1,4 +1,4 @@
-package agent.cglib;
+package spring.aop.agent.cglib;
 
 /**
  * 被代理目标类

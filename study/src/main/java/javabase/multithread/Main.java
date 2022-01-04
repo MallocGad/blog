@@ -2,6 +2,8 @@ package javabase.multithread;
 
 import org.junit.Test;
 
+import java.lang.reflect.Field;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.LockSupport;
@@ -191,36 +193,115 @@ public class Main {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-//        System.out.println("thread线程中断状态：" + thread.isInterrupted());
-//        thread.interrupt();
-//        System.out.println("中断后thread线程中断状态：" + thread.isInterrupted());
+        System.out.println("thread线程中断状态：" + thread.isInterrupted());
+        thread.interrupt();
+        System.out.println("中断后thread线程中断状态：" + thread.isInterrupted());
     }
 
     @Test
-    public void testRetLock(){
+    public void testInterrupt1() {
+        Thread thread = new Thread(() -> {
+            System.out.println("thread,first:" + Thread.currentThread().isInterrupted());
+            System.out.println("thread,second:" + Thread.currentThread().isInterrupted());
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                System.out.println("e:" + Thread.currentThread().isInterrupted());
+                System.out.println(e.getMessage());
+                Thread.currentThread().interrupt();
+                System.out.println("我执行了");
+            }
+        });
+        thread.start();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        // 主线程中断子线程
+        thread.interrupt();
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        boolean interrupted = Thread.currentThread().isInterrupted();
+        System.out.println("main:" + interrupted);
+    }
+
+    @Test
+    public void testRetLock() {
         ReentrantLock lock = new ReentrantLock();
-        if (lock.tryLock()){
+        if (lock.tryLock()) {
             System.out.println("hahahaha");
         }
 
     }
 
     @Test
-    public void test111(){
+    public void testThreadLocal() throws InterruptedException {
+        Thread thread = new Thread(() -> {
+            testGc("test1", false);
+        });
+        Thread thread2 = new Thread(() -> {
+            testGc("test222", true);
+        });
+        thread.start();
+        thread.join();
+        thread2.start();
+        thread2.join();
+
+    }
+
+    public void testGc(String value, boolean isGc) {
         try {
-            int a = 2;
-            System.out.println("aaa");
-            if (a == 1){
-                return;
-            }else{
-                throw new Exception();
+            new ThreadLocal<>().set(value);
+            if (isGc) {
+                System.gc();
             }
-        }catch (Exception e){
-            System.out.println(e);
-        }finally {
-            System.out.println("enenedddd");
+            System.out.println(value + "thread: " + Thread.currentThread().getId());
+            Thread t = Thread.currentThread();
+            Class<Thread> threadClass = Thread.class;
+            Class<? extends Thread> clz = t.getClass();
+            Field field = clz.getDeclaredField("threadLocals");
+            field.setAccessible(true);
+            Object threadLocalMap = field.get(t);
+            Class<?> tlmClass = threadLocalMap.getClass();
+            Field tableFiled = tlmClass.getDeclaredField("table");
+            tableFiled.setAccessible(true);
+            Object[] arr = (Object[]) tableFiled.get(threadLocalMap);
+            for (Object o : arr) {
+                if (Objects.nonNull(o)) {
+                    Class<?> entryClass = o.getClass();
+                    Field valueField = entryClass.getDeclaredField("value");
+                    Field referentField = entryClass.getSuperclass().getSuperclass().getDeclaredField("referent");
+                    valueField.setAccessible(true);
+                    referentField.setAccessible(true);
+                    System.out.println(String.format("弱引用key:%s,值：%s", referentField.get(o), valueField.get(o)));
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
+    @Test
+    public void testInheritableThreadLocal(){
+        
+    }
+
+    @Test
+    public void tettet() {
+        System.out.println(8 >>> 1);
+        System.out.println(4 >>> 1);
+        System.out.println(2 >>> 1);
+        System.out.println(8 >> 1);
+        System.out.println(4 >> 1);
+        System.out.println(2 >> 1);
+
+    }
 
 }
