@@ -66,7 +66,7 @@ class LRUCache {
     private void addToHead(ListNode newNode) {
         count++;
         if (count == 1) {
-            head = newNode;
+            tail = head = newNode;
         }
         newNode.next = head;
         head.pre = newNode;
@@ -87,7 +87,7 @@ class LRUCache {
     }
 
     // 双向链表
-    class ListNode {
+    static class ListNode {
         ListNode next;
         ListNode pre;
         int value;
