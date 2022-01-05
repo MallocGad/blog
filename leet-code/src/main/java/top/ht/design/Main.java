@@ -27,9 +27,6 @@ class LRUCache {
     public LRUCache(int capacity) {
         cacheMap = new HashMap<>(capacity);
         this.capacity = capacity;
-        head = tail = new ListNode();
-        head.next = tail;
-        tail.pre = head;
     }
 
     public int get(int key) {
@@ -49,11 +46,6 @@ class LRUCache {
             moveToHead(node);
             return;
         }
-        count++;
-        if (count == 1){
-            head.value = value;
-            return;
-        }
         ListNode newNode = new ListNode(value);
         cacheMap.put(key, newNode);
         addToHead(newNode);
@@ -63,11 +55,19 @@ class LRUCache {
     }
 
     private void deleteTail() {
+        count--;
+        if (count == 0) {
+            head = tail = null;
+        }
         tail.pre.next = null;
         tail = tail.pre;
     }
 
     private void addToHead(ListNode newNode) {
+        count++;
+        if (count == 1) {
+            head = newNode;
+        }
         newNode.next = head;
         head.pre = newNode;
         head = newNode;
