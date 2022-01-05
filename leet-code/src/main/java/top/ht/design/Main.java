@@ -49,13 +49,13 @@ class LRUCache {
             moveToHead(node);
             return;
         }
-        ListNode newNode = new ListNode(value);
-        cacheMap.put(key, newNode);
         count++;
         if (count == 1){
             head.value = value;
             return;
         }
+        ListNode newNode = new ListNode(value);
+        cacheMap.put(key, newNode);
         addToHead(newNode);
         if (count > capacity) {
             deleteTail();
