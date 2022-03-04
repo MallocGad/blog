@@ -22,15 +22,9 @@
             <version>4.13</version>
         </dependency>
         <dependency>
-<<<<<<< HEAD
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>RELEASE</version>
-            <scope>compile</scope>
-=======
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
->>>>>>> origin/main
+            <groupId>org.openjdk.jol</groupId>
+            <artifactId>jol-core</artifactId>
+            <version>0.10</version>
         </dependency>
     </dependencies>
 
