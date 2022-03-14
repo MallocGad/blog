@@ -428,9 +428,6 @@ public class LeetCode2 {
         node.next = pre;
     }
 
-    private boolean isBadVersion(int mid) {
-        return true;
-    }
 
     /**
      * 35. 搜索插入位置
@@ -509,6 +506,8 @@ public class LeetCode2 {
             left = queue1.poll();
             right = queue2.poll();
         }
+        return true;
+    }
     /**
      * 136. 只出现一次的数字
      */
