@@ -1,7 +1,11 @@
 package top.ht.listNode;
 
+import org.junit.Test;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 /**
  * @author: huangtao3
@@ -143,6 +147,59 @@ public class Solutions {
             nums[0] = t;
         }
     }
+
+    /**
+     * 798. 得分最高的最小轮调
+     */
+    public int bestRotation(int[] nums) {
+        int minK = 0, max = 0;
+        for (int k = 0; k < nums.length; k++) {
+            int count = 0;
+            int move = nums.length - k;
+            for (int i = 0; i < nums.length; i++) {
+                int iMove = (i + move) % nums.length;
+                if (nums[i] <= iMove) {
+                    count++;
+                }
+            }
+            if (max < count) {
+                max = count;
+                minK = k;
+            }
+        }
+        return minK;
+    }
+
+    /**
+     * 1109. 航班预订统计
+     */
+    public int[] corpFlightBookings(int[][] bookings, int n) {
+        int[] answer = new int[n];
+        for (int[] booking : bookings) {
+
+            int l = booking[0] - 1;
+            int r = booking[1] - 1;
+            int v = booking[2];
+            answer[l] += v;
+            if (r + 1 < n) {
+                answer[r + 1] -= v;
+            }
+        }
+        for (int i = 1; i < answer.length; i++) {
+            answer[i] += answer[i-1];
+        }
+        return answer;
+    }
+
+
+
+    @Test
+    public void test() {
+        int[] nums = {2, 3, 1, 4, 0};
+        int i = bestRotation(nums);
+        System.out.println(i);
+    }
+
 
     public static void main(String[] args) {
         int[] a = {-4, -1, 0, 3, 10};
