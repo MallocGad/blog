@@ -2,14 +2,9 @@ package top.ht;
 
 import org.springframework.util.StopWatch;
 
-import javax.jnlp.ClipboardService;
-import javax.transaction.TransactionRequiredException;
 import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author: huangtao3
@@ -318,6 +313,28 @@ public class LeetCode2 {
         }
     }
 
+    /**
+     * 94.二叉树中序遍历
+     *
+     * @param root
+     * @return
+     */
+    public List<Integer> inorderTraversal(TreeNode root) {
+        List<Integer> result = new ArrayList<>();
+        Stack<TreeNode> stack = new Stack<>();
+        while (Objects.nonNull(root) || !stack.empty()) {
+            while (Objects.nonNull(root)) {
+                stack.push(root);
+                root = root.left;
+            }
+            root = stack.pop();
+            result.add(root.val);
+            root = root.right;
+        }
+        return result;
+    }
+
+
     private void dps(List<List<Integer>> result, Stack<Integer> tempResult, int[] candidates, int point, int target) {
         if (target == 0) {
             result.add(new ArrayList<>(tempResult));
@@ -411,6 +428,10 @@ public class LeetCode2 {
         node.next = pre;
     }
 
+    private boolean isBadVersion(int mid) {
+        return true;
+    }
+
     /**
      * 35. 搜索插入位置
      */
@@ -437,6 +458,57 @@ public class LeetCode2 {
         return lastMin;
     }
 
+    /**
+     * 101. 对称二叉树
+     */
+    public boolean isSymmetric(TreeNode root) {
+        return compare(root.left, root.right);
+    }
+
+    private boolean compare(TreeNode left, TreeNode right) {
+        if (left == null && right == null) {
+            return true;
+        }
+        if (left == null || right == null) {
+            return false;
+        }
+        if (left.val != right.val) {
+            return false;
+        }
+        return compare(left.left, right.right) && compare(left.right, right.left);
+    }
+
+    public boolean isSymmetric1(TreeNode root) {
+        LinkedList<TreeNode> queue1 = new LinkedList<>();
+        LinkedList<TreeNode> queue2 = new LinkedList<>();
+        // 题目描述了root不为空
+        TreeNode left = root.left;
+        TreeNode right = root.right;
+        while (left != null || right != null) {
+            if (left == null || right == null) {
+                return false;
+            }
+            if (left.val != right.val) {
+                return false;
+            }
+            if (left.left == null ^ right.right == null) {
+                return false;
+            }
+            if (left.right == null ^ right.left == null) {
+                return false;
+            }
+            // 这里只需要判断一个就行，因为前面已经保证左右一定不为null
+            if (left.left != null) {
+                queue1.offer(left.left);
+                queue2.offer(right.right);
+            }
+            if (left.right != null) {
+                queue1.offer(right.left);
+                queue2.offer(left.right);
+            }
+            left = queue1.poll();
+            right = queue2.poll();
+        }
     /**
      * 136. 只出现一次的数字
      */
@@ -469,21 +541,224 @@ public class LeetCode2 {
         return true;
     }
 
+    /**
+     * 98. 验证二叉搜索树
+     */
+    int pre = Integer.MIN_VALUE;
+
+    public boolean isValidBST(TreeNode root) {
+        if (root == null) {
+            return true;
+        }
+        if (!isValidBST(root.left)) {
+            return false;
+        }
+        if (pre > root.val) {
+            return false;
+        }
+        pre = root.val;
+        return isValidBST(root.right);
+    }
+
+    /**
+     * 99. 恢复二叉搜索树
+     */
+    TreeNode firstNode = null, secondNode = null, preNode = null;
+
+    public void recoverTree(TreeNode root) {
+        recoverTreeDef(root);
+        int temp = firstNode.val;
+        firstNode.val = secondNode.val;
+        secondNode.val = temp;
+    }
+
+    void recoverTreeDef(TreeNode root) {
+        if (null == root) {
+            return;
+        }
+        recoverTreeDef(root.left);
+        if (preNode != null && preNode.val > root.val) {
+            secondNode = root;
+            if (firstNode == null) {
+                firstNode = preNode;
+            } else {
+                return;
+            }
+        }
+        preNode = root;
+        recoverTreeDef(root.right);
+    }
+
+    /**
+     * @param flag true 左子树，false右子数
+     */
+    boolean dfs(TreeNode root, List<Integer> fathers, boolean flag) {
+        if (root == null) {
+            return true;
+        }
+        for (Integer father : fathers) {
+            if (flag && root.val >= father) {
+                return false;
+            } else if (!flag && root.val <= father) {
+                return false;
+            }
+        }
+        fathers.add(root.val);
+        boolean b = dfs(root.left, fathers, true) &&
+                dfs(root.right, fathers, false);
+        fathers.remove(fathers.size() - 1);
+        return b;
+    }
+
+    public boolean findNumberIn2DArray(int[][] matrix, int target) {
+        if (null == matrix || matrix.length <= 0 || matrix[0].length <= 0) {
+            return false;
+        }
+        int row = matrix.length - 1;
+        int maxCol, minCol;
+        // 查找matrix[0]中最后一个小于target目标的列
+        maxCol = findInterval(matrix[0], target);
+        // 此时low处于 > target 或 < target的临界点，需要具体判断一下
+        if (matrix[0][maxCol] == target) {
+            return true;
+        }
+        maxCol = matrix[0][maxCol] < target ? maxCol : maxCol - 1;
+        // maxtrix[row]中第一个大于target的目标列;
+        minCol = findInterval(matrix[row], target);
+        if (matrix[row][minCol] == target) {
+            return true;
+        }
+        minCol = matrix[row][minCol] > target ? minCol : minCol + 1;
+
+        // 此时target只能在[minCol,maxCol]之间
+        for (int i = minCol; i <= maxCol; i++) {
+            int low = 0, top = row, mid = 0;
+            while (low <= top) {
+                mid = low + (top - low) / 2;
+                if (matrix[mid][i] > target) {
+                    top = mid - 1;
+                } else if (matrix[mid][i] < target) {
+                    low = mid + 1;
+                } else if (matrix[mid][i] == target) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    int findInterval(int[] num, int target) {
+        int low = 0, top = num.length - 1, mid;
+        while (low < top) {
+            mid = low + (top - low) / 2;
+            if (num[mid] > target) {
+                top = mid - 1;
+            } else if (num[mid] < target) {
+                low = mid + 1;
+            } else if (num[mid] == target) {
+                return mid;
+            }
+        }
+        return low;
+    }
+
+    public int[] twoSum(int[] nums, int target) {
+        HashMap<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < nums.length; i++) {
+            int temp = target - nums[i];
+            if (map.get(temp) != null) {
+                return new int[]{i, map.get(temp)};
+            } else {
+                map.put(nums[i], i);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 20. 有效的括号
+     */
+    public boolean isValid(String s) {
+        char[] chars = s.toCharArray();
+        Stack<Character> stack = new Stack<>();
+        HashMap<Character, Character> map = new HashMap<>();
+        map.put(')', '(');
+        map.put('}', '{');
+        map.put(']', '[');
+        for (char aChar : chars) {
+            if (aChar == '(' || aChar == '[' || aChar == '{') {
+                stack.push(aChar);
+            } else if (stack.empty() || !map.get(aChar).equals(stack.pop())) {
+                return false;
+            }
+        }
+        return stack.empty();
+    }
+
+    /**
+     * 21. 合并两个有序链表
+     */
+    public ListNode mergeTwoLists(ListNode list1, ListNode list2) {
+        if (list1 == null && list2 == null) {
+            return null;
+        }
+        if (list1 == null) {
+            return list2;
+        }
+        if (list2 == null) {
+            return list1;
+        }
+        ListNode head, pre;
+
+        if (list1.val > list2.val) {
+            pre = head = list2;
+            list2 = list2.next;
+        } else {
+            pre = head = list1;
+            list1 = list1.next;
+        }
+        while (list1 != null && list2 != null) {
+            if (list1.val > list2.val) {
+                pre.next = list2;
+                list2 = list2.next;
+            } else {
+                pre.next = list1;
+                list1 = list1.next;
+            }
+            pre = pre.next;
+        }
+        if (list1 != null) {
+            pre.next = list1;
+        } else {
+            pre.next = list2;
+        }
+        return head;
+    }
+
+    /**
+     * 53. 最大子数组和
+     */
+    public int maxSubArray(int[] nums) {
+        int[] dp = new int[nums.length];
+        dp[0] = nums[0];
+        for (int i = 1; i < nums.length; i++) {
+            if (dp[i - 1] > 0) {
+                dp[i] = dp[i - 1] + nums[i];
+            } else {
+                dp[i] = nums[i];
+            }
+        }
+        int max = dp[0];
+        for (int i = 1; i < dp.length; i++) {
+            max = Math.max(max, dp[i]);
+        }
+        return max;
+    }
 
     public static void main(String[] args) throws UnsupportedEncodingException {
-        //        List<List<Integer>> sum = new LeetCode2().fourSum(new int[]{1, 0, -1, 0, -2, 2}, 0);
-        //        System.out.println(sum);
-        //        List<List<Integer>> result = new LeetCode2().combinationSum(new int[]{5, 2, 3}, 8);
-        //        System.out.println(result);
-        //        BigDecimal multiply = new BigDecimal(10).multiply(new BigDecimal(2));
-        StopWatch watch = new StopWatch();
-        watch.start();
-//        List<List<Integer>> res = new LeetCode2().fourSum(new int[]{-479, -472, -469, -461, -456, -420, -412, -403, -391, -377, -362, -361, -340, -336, -336, -323, -315, -301, -288, -272, -271, -246, -244, -227, -226, -225, -210, -194, -190, -187, -183, -176, -167, -143, -140, -123, -120, -74, -60, -40, -39, -37, -34, -33, -29, -26, -23, -18, -17, -11, -9, 6, 8, 20, 29, 35, 45, 48, 58, 65, 122, 124, 127, 129, 145, 164, 182, 198, 199, 206, 207, 217, 218, 226, 267, 274, 278, 278, 309, 322, 323, 327, 350, 361, 372, 376, 387, 391, 434, 449, 457, 465, 488}, 1979);
-        List<List<Integer>> res = new LeetCode2().fourSum1(new int[]{0, 0, 0, 1000000000, 1000000000, 1000000000, 1000000000}, 1000000000);
-        watch.stop();
-        System.out.println(res);
-        System.out.println(watch.getLastTaskTimeMillis());
-//        list.iterator()
+        int[][] num = {{1, 4, 7, 11, 15}, {2, 5, 8, 12, 19}, {3, 6, 9, 16, 22}, {10, 13, 14, 17, 24}, {18, 21, 23, 26, 30}};
+        new LeetCode2().findNumberIn2DArray(num, 5);
     }
 
     public static String decodeUTF8Str(String xStr) throws UnsupportedEncodingException {
