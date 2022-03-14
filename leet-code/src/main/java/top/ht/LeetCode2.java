@@ -264,6 +264,24 @@ public class LeetCode2 {
         return head;
     }
 
+    public ListNode removeNthFromEnd2(ListNode head, int n) {
+        ListNode pre, next;
+        ListNode node = new ListNode();
+        node.next = head;
+        next = node;
+        while (n > 0) {
+            next = next.next;
+            n--;
+        }
+        pre = node;
+        while (next.next != null) {
+            pre = pre.next;
+            next = next.next;
+        }
+        pre.next = pre.next.next;
+        return node.next;
+    }
+
     /**
      * 39. 组合总和
      */
@@ -299,28 +317,6 @@ public class LeetCode2 {
             this.right = right;
         }
     }
-
-    /**
-     * 94.二叉树中序遍历
-     *
-     * @param root
-     * @return
-     */
-    public List<Integer> inorderTraversal(TreeNode root) {
-        List<Integer> result = new ArrayList<>();
-        Stack<TreeNode> stack = new Stack<>();
-        while (Objects.nonNull(root) || !stack.empty()) {
-            while (Objects.nonNull(root)) {
-                stack.push(root);
-                root = root.left;
-            }
-            root = stack.pop();
-            result.add(root.val);
-            root = root.right;
-        }
-        return result;
-    }
-
 
     private void dps(List<List<Integer>> result, Stack<Integer> tempResult, int[] candidates, int point, int target) {
         if (target == 0) {
@@ -393,12 +389,26 @@ public class LeetCode2 {
         while (top > low) {
             mid = (top - low) / 2 + low;
             if (isBadVersion(mid)) {
-                top = mid;
+                top = mid - 1;
             } else {
                 low = mid + 1;
             }
         }
-        return top;
+        return isBadVersion(top) ? top : top + 1;
+    }
+
+
+    public void listRevered(ListNode head) {
+        next(head, head.next);
+        head.next = null;
+    }
+
+    private void next(ListNode pre, ListNode node) {
+        if (node == null) {
+            return;
+        }
+        next(node, node.next);
+        node.next = pre;
     }
 
     /**
@@ -427,11 +437,37 @@ public class LeetCode2 {
         return lastMin;
     }
 
+    /**
+     * 136. 只出现一次的数字
+     */
+    public int singleNumber(int[] nums) {
+        int res = 0;
+        for (int i = 0; i < nums.length; i++) {
+            res = res ^ nums[i];
+        }
+        return res;
+    }
+
+    public int singleNumber2(int[] nums) {
+        HashMap<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < nums.length; i++) {
+            if (map.containsKey(nums[i])){
+                map.put(nums[i],2);
+            }else{
+                map.put(nums[i],1);
+            }
+        }
+        for (Integer key : map.keySet()){
+            if (map.get(key) == 1){
+                return key;
+            }
+        }
+        return -1;
+    }
+
     boolean isBadVersion(int version) {
         return true;
     }
-
-
 
 
     public static void main(String[] args) throws UnsupportedEncodingException {
