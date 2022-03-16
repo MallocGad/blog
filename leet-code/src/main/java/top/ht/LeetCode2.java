@@ -257,6 +257,24 @@ public class LeetCode2 {
         return head;
     }
 
+    public ListNode removeNthFromEnd2(ListNode head, int n) {
+        ListNode pre, next;
+        ListNode node = new ListNode();
+        node.next = head;
+        next = node;
+        while (n > 0) {
+            next = next.next;
+            n--;
+        }
+        pre = node;
+        while (next.next != null) {
+            pre = pre.next;
+            next = next.next;
+        }
+        pre.next = pre.next.next;
+        return node.next;
+    }
+
     /**
      * 39. 组合总和
      */
@@ -386,17 +404,28 @@ public class LeetCode2 {
         while (top > low) {
             mid = (top - low) / 2 + low;
             if (isBadVersion(mid)) {
-                top = mid;
+                top = mid - 1;
             } else {
                 low = mid + 1;
             }
         }
-        return top;
+        return isBadVersion(top) ? top : top + 1;
     }
 
-    private boolean isBadVersion(int mid) {
-        return true;
+
+    public void listRevered(ListNode head) {
+        next(head, head.next);
+        head.next = null;
     }
+
+    private void next(ListNode pre, ListNode node) {
+        if (node == null) {
+            return;
+        }
+        next(node, node.next);
+        node.next = pre;
+    }
+
 
     /**
      * 35. 搜索插入位置
@@ -475,6 +504,37 @@ public class LeetCode2 {
             left = queue1.poll();
             right = queue2.poll();
         }
+        return true;
+    }
+    /**
+     * 136. 只出现一次的数字
+     */
+    public int singleNumber(int[] nums) {
+        int res = 0;
+        for (int i = 0; i < nums.length; i++) {
+            res = res ^ nums[i];
+        }
+        return res;
+    }
+
+    public int singleNumber2(int[] nums) {
+        HashMap<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < nums.length; i++) {
+            if (map.containsKey(nums[i])){
+                map.put(nums[i],2);
+            }else{
+                map.put(nums[i],1);
+            }
+        }
+        for (Integer key : map.keySet()){
+            if (map.get(key) == 1){
+                return key;
+            }
+        }
+        return -1;
+    }
+
+    boolean isBadVersion(int version) {
         return true;
     }
 
@@ -692,8 +752,6 @@ public class LeetCode2 {
         }
         return max;
     }
-
-
 
     public static void main(String[] args) throws UnsupportedEncodingException {
         int[][] num = {{1, 4, 7, 11, 15}, {2, 5, 8, 12, 19}, {3, 6, 9, 16, 22}, {10, 13, 14, 17, 24}, {18, 21, 23, 26, 30}};

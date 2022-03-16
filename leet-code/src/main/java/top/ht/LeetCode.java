@@ -8,6 +8,7 @@ import java.util.List;
 
 /**
  * LeetCode代码
+ *
  * @author : huangtao3
  * @since : 2020/8/8 14:33
  */
@@ -231,12 +232,12 @@ public class LeetCode {
      */
     public int threeSumClosestDoublePointer(int[] nums, int target) {
         int min = 99999;
-        int sum=0;
+        int sum = 0;
         for (int i = 0; i < nums.length - 2; i++) {
             int j = i + 1, k = nums.length - 1;
             //target-i ~ j+k
             int targetI = target - nums[i];
-            int tempMin=99999;
+            int tempMin = 99999;
             while (j < k) {
                 if (nums[j] + nums[k] > targetI) {
                     k--;
@@ -249,23 +250,52 @@ public class LeetCode {
         return 1;
     }
 
+    /**
+     * 4. 寻找两个正序数组的中位数
+     */
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        int m = nums1.length;
+        int n = nums2.length;
+
+        int i = 0, j = 0, k = 0;
+        int pre = 0, next = 0;
+        // 3/2 = 1; 4/2 = 2;
+        while (k <= (m + n) / 2) {
+            pre = next;
+            if (j >= nums2.length || (i < nums1.length && nums1[i] < nums2[j] )) {
+                next = nums1[i++];
+            } else {
+                next = nums2[j++];
+            }
+            k++;
+        }
+        if (((m + n) & 1) == 1) {
+            return next;
+        }
+        return (pre + next) / 2.0;
+
+    }
     @Test
     public void test() {
-        int[] nums = new int[]{0,0,0,0};
+        int[] nums = new int[]{0, 0, 0, 0};
         List<List<Integer>> lists = threeSum(nums);
+        ThreadLocal<Integer> local = new ThreadLocal<>();
+        local.set(1);
         System.out.println(lists);
     }
 
-    static class Node{
+    static class Node {
         int v;
         Node next;
-        Node(int v,Node next){
-            this.v= v;
-            this.next=next;
+
+        Node(int v, Node next) {
+            this.v = v;
+            this.next = next;
         }
     }
+
     public static void main(String[] args) {
-        Node head = new Node(0,null);
+        Node head = new Node(0, null);
         Node pre = head;
         for (int i = 1; i < 10; i++) {
             Node node = new Node(i, null);
@@ -273,7 +303,7 @@ public class LeetCode {
             pre = node;
         }
         Node pointer = head;
-        while(pointer != null){
+        while (pointer != null) {
             System.out.println(pointer.v);
             pointer = pointer.next;
         }

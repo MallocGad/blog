@@ -46,7 +46,7 @@ class LRUCache {
             moveToHead(node);
             return;
         }
-        ListNode newNode = new ListNode(value);
+        ListNode newNode = new ListNode(key, value);
         cacheMap.put(key, newNode);
         addToHead(newNode);
         if (count > capacity) {
@@ -57,16 +57,20 @@ class LRUCache {
     private void deleteTail() {
         count--;
         if (count == 0) {
+            cacheMap.remove(tail.key);
             head = tail = null;
+        } else {
+            cacheMap.remove(tail.key);
+            tail.pre.next = null;
+            tail = tail.pre;
         }
-        tail.pre.next = null;
-        tail = tail.pre;
     }
 
     private void addToHead(ListNode newNode) {
         count++;
         if (count == 1) {
             tail = head = newNode;
+            return;
         }
         newNode.next = head;
         head.pre = newNode;
@@ -79,6 +83,11 @@ class LRUCache {
         }
         if (node.next != null) {
             node.next.pre = node.pre;
+        } else {
+            tail = node.pre;
+        }
+        if (node.pre == head) {
+            node.pre.pre = node;
         }
         node.pre.next = node.next;
         node.next = head;
@@ -91,13 +100,29 @@ class LRUCache {
         ListNode next;
         ListNode pre;
         int value;
+        int key;
 
         ListNode() {
 
         }
 
-        ListNode(int value) {
+        ListNode(int key, int value) {
+            this.key = key;
             this.value = value;
         }
+    }
+
+    public static void main(String[] args) {
+        LRUCache lruCache = new LRUCache(2);
+        LRUCache lRUCache = new LRUCache(2);
+        lRUCache.put(1, 1); // 缓存是 {1=1}
+        lRUCache.put(2, 2); // 缓存是 {1=1, 2=2}
+        lRUCache.get(1);    // 返回 1
+        lRUCache.put(3, 3); // 该操作会使得关键字 2 作废，缓存是 {1=1, 3=3}
+        lRUCache.get(2);    // 返回 -1 (未找到)
+        lRUCache.put(4, 4); // 该操作会使得关键字 1 作废，缓存是 {4=4, 3=3}
+        lRUCache.get(1);    // 返回 -1 (未找到)
+        lRUCache.get(3);    // 返回 3
+        lRUCache.get(4);    // 返回 4
     }
 }
