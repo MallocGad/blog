@@ -35,6 +35,7 @@ public class MyAvlTree {
         if (diff > 1 && n.letf.data > data) {
             return rightRotate(n);
         }
+        return null;
     }
 
     private Node rightRotate(Node n) {
@@ -60,6 +61,6 @@ public class MyAvlTree {
     }
 
     public Node leftRotate(Node n) {
-        if ()
+       return null;
     }
 }

@@ -117,11 +117,27 @@ public class Tree {
     }
 
     public int maxDepth(TreeNode root) {
-        if (root == null){
+        if (root == null) {
             return 0;
         }
-        return Math.max(maxDepth(root.right),maxDepth(root.left)) + 1;
+        return Math.max(maxDepth(root.right), maxDepth(root.left)) + 1;
     }
+
+    /**
+     * 226. 翻转二叉树
+     */
+    public TreeNode invertTree(TreeNode root) {
+        if (null == root){
+            return root;
+        }
+        invertTree(root.left);
+        invertTree(root.right);
+        TreeNode temp = root.left;
+        root.left = root.right;
+        root.right = temp;
+        return root;
+    }
+
 
 
     class TreeNode {
