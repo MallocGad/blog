@@ -127,7 +127,7 @@ public class Tree {
      * 226. 翻转二叉树
      */
     public TreeNode invertTree(TreeNode root) {
-        if (null == root){
+        if (null == root) {
             return root;
         }
         invertTree(root.left);

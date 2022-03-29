@@ -3,7 +3,7 @@ package top.ht;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Stack;
+import java.util.Map;
 
 /**
  * @Author: ht
@@ -177,6 +177,168 @@ public class Practice2022 {
         }
         return list;
     }
+
+    /**
+     * 70. 爬楼梯
+     */
+    public int climbStairs(int n) {
+        int[] dp = new int[50];
+        dp[1] = 1;
+        dp[2] = 2;
+        for (int i = 3; i <= n; i++) {
+            dp[i] = dp[i - 1] + dp[i - 2];
+        }
+        return dp[n];
+    }
+
+    /**
+     * 79. 单词搜索
+     */
+    public boolean exist(char[][] board, String word) {
+        int m = board.length;
+        int n = board[0].length;
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (board[i][j] == word.charAt(0) && exist_79_Dp(board, i, j, word, 0)) {
+                    return true;
+                }
+            }
+
+        }
+        return false;
+    }
+
+    public boolean exist_79_Dp(char[][] board, int i, int j, String word, int pos) {
+        int m = board.length;
+        int n = board[0].length;
+        boolean res = false;
+        if (pos == word.length()) {
+            return true;
+        }
+        if (i >= m || j >= n || i < 0 || j < 0) {
+            return false;
+        }
+        if (board[i][j] == word.charAt(pos)) {
+            char c = board[i][j];
+            board[i][j] = ' ';
+            res = exist_79_Dp(board, i + 1, j, word, pos + 1)
+                    || exist_79_Dp(board, i - 1, j, word, pos + 1)
+                    || exist_79_Dp(board, i, j + 1, word, pos + 1)
+                    || exist_79_Dp(board, i, j - 1, word, pos + 1);
+            board[i][j] = c;
+        }
+        return res;
+    }
+
+
+    /**
+     * 43. 字符串相乘
+     */
+    public static String multiply(String num1, String num2) {
+        if ("0".equals(num1) || "0".equals(num2)){
+            return "0";
+        }
+        int n = num1.length(), m = num2.length();
+        String res = "0";
+        for (int i = n - 1; i >= 0; i--) {
+            StringBuilder nowRes = new StringBuilder();
+            int add = 0;
+            for (int j = n - 1; j > i; j--) {
+                nowRes.append(0);
+            }
+            int x = num1.charAt(i) - '0';
+            for (int j = m - 1; j >= 0; j--) {
+                int y = num2.charAt(j) - '0';
+                int value = x * y + add;
+                nowRes.append(value % 10);
+                add = value / 10;
+            }
+            if (add != 0) {
+                nowRes.append(add % 10);
+            }
+            res = add(res, nowRes.reverse().toString());
+        }
+        return res.toString();
+    }
+
+    private static String add(String a, String b) {
+        int n = a.length(), m = b.length(), add = 0;
+        StringBuilder res = new StringBuilder();
+        for (int i = n - 1, j = m - 1; i >= 0 || j >= 0 || add != 0; i--, j--) {
+            int aNum = i >= 0 ? a.charAt(i) - '0' : 0;
+            int bNum = j >= 0 ? b.charAt(j) - '0' : 0;
+            int value = aNum + bNum + add;
+            res.append(value % 10);
+            add = value / 10;
+        }
+        return res.reverse().toString();
+    }
+
+    public static void main(String[] args) {
+        String multiply = multiply("2", "3");
+        System.out.println(multiply);
+    }
+
+    /**
+     * 51. N 皇后
+     */
+    ArrayList<List<String>> res = new ArrayList<>();
+
+    public List<List<String>> solveNQueens(int n) {
+        boolean[][] bord = new boolean[n][n];
+        dps(0, bord);
+        return res;
+    }
+
+    void dps(int depth, boolean[][] bord) {
+        // 到达最后结束判断
+        if (depth == bord.length) {
+            ArrayList<String> list = new ArrayList<>();
+            for (int i = 0; i < bord.length; i++) {
+                StringBuffer strs = new StringBuffer();
+                for (int j = 0; j < bord.length; j++) {
+                    if (bord[i][j]) {
+                        strs.append("Q");
+                    } else {
+                        strs.append(".");
+                    }
+                }
+                list.add(strs.toString());
+            }
+            res.add(list);
+            return;
+        }
+        for (int i = 0; i < bord.length; i++) {
+            if (judge(i, depth, bord)) {
+                bord[i][depth] = true;
+                dps(depth + 1, bord);
+                bord[i][depth] = false;
+            }
+        }
+    }
+
+    boolean judge(int i, int j, boolean[][] bord) {
+        // 前面同一行是否有queen
+        for (int k = 0; k < j; k++) {
+            if (bord[i][k]) {
+                return false;
+            }
+        }
+        // 对角判断
+        for (int k = i - 1, m = j - 1; k >= 0 && m >= 0; k--, m--) {
+            if (bord[k][m]) {
+                return false;
+            }
+        }
+        // 对角判断2
+        for (int k = i + 1, m = j - 1; k < bord.length && m >= 0; k++, m--) {
+            if (bord[k][m]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     public class ListNode {
         int val;

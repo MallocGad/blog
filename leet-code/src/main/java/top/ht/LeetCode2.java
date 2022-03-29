@@ -1,5 +1,7 @@
 package top.ht;
 
+import org.junit.Test;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.*;
@@ -506,6 +508,7 @@ public class LeetCode2 {
         }
         return true;
     }
+
     /**
      * 136. 只出现一次的数字
      */
@@ -520,14 +523,14 @@ public class LeetCode2 {
     public int singleNumber2(int[] nums) {
         HashMap<Integer, Integer> map = new HashMap<>();
         for (int i = 0; i < nums.length; i++) {
-            if (map.containsKey(nums[i])){
-                map.put(nums[i],2);
-            }else{
-                map.put(nums[i],1);
+            if (map.containsKey(nums[i])) {
+                map.put(nums[i], 2);
+            } else {
+                map.put(nums[i], 1);
             }
         }
-        for (Integer key : map.keySet()){
-            if (map.get(key) == 1){
+        for (Integer key : map.keySet()) {
+            if (map.get(key) == 1) {
                 return key;
             }
         }
@@ -753,9 +756,98 @@ public class LeetCode2 {
         return max;
     }
 
+    /**
+     * 二叉树层序遍历
+     */
+    public List<List<Integer>> levelOrder(TreeNode root) {
+        List<List<Integer>> res = new ArrayList<>();
+        List<TreeNode> nodes = new ArrayList<>();
+        nodes.add(root);
+        while (nodes.size() > 0) {
+            ArrayList<Integer> list = new ArrayList<>();
+            ArrayList<TreeNode> nextNodes = new ArrayList<>();
+            for (TreeNode node : nodes) {
+                list.add(node.val);
+                if (node.left != null) {
+                    nextNodes.add(node.left);
+                }
+                if (node.right != null) {
+                    nextNodes.add(node.right);
+                }
+            }
+            nodes = nextNodes;
+            res.add(list);
+        }
+        return res;
+    }
+
+    ArrayList<Integer> res = new ArrayList<>();
+
+    @Test
+    public void rightSideView() {
+        Queue<TreeNode> queen = new ArrayDeque<>();
+        queen.add(null);
+        System.out.println(queen);
+    }
+
+    void fun(List<TreeNode> nodes) {
+        res.add(nodes.get(nodes.size() - 1).val);
+        ArrayList<TreeNode> nextNodes = new ArrayList<>();
+        for (TreeNode node : nodes) {
+            if (node.left != null) {
+                nextNodes.add(node.left);
+            }
+            if (node.right != null) {
+                nextNodes.add(node.right);
+            }
+        }
+        if (nextNodes.size() <= 0) {
+            return;
+        }
+        fun(nextNodes);
+    }
+
+    /**
+     * 括号生成
+     */
+    StringBuilder str = new StringBuilder();
+    ArrayList<String> result = new ArrayList<>();
+
+    public List<String> generateParenthesis(int n) {
+        fun(0,0,n);
+        return result;
+    }
+
+    void fun(int left, int right, int n) {
+        if (left == n && right == n) {
+            result.add(str.toString());
+        }
+        if (left < n) {
+            str.append("(");
+            fun(left + 1, right, n);
+            str.deleteCharAt(str.length() - 1);
+        }
+        if (right < n && right < left) {
+            str.append(")");
+            fun(left, right + 1, n);
+            str.deleteCharAt(str.length() - 1);
+        }
+    }
+
     public static void main(String[] args) throws UnsupportedEncodingException {
-        int[][] num = {{1, 4, 7, 11, 15}, {2, 5, 8, 12, 19}, {3, 6, 9, 16, 22}, {10, 13, 14, 17, 24}, {18, 21, 23, 26, 30}};
-        new LeetCode2().findNumberIn2DArray(num, 5);
+        ArrayList<Integer> list = new ArrayList<>();
+        list.add(1);
+        list.add(2);
+        list.add(4);
+        list.add(4);
+        list.add(5);
+        list.add(2);
+//        for (int i = 0; i < list.size(); i++) {
+//            if ((list.get(i) & 1) == 1){
+//                list.set(i,0);
+//            }
+//        }
+        list.removeIf(item -> (item & 1) == 1);
     }
 
     public static String decodeUTF8Str(String xStr) throws UnsupportedEncodingException {
